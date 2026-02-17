@@ -218,7 +218,9 @@
   });
 
   /* live updates */
-  const socket=new WebSocket(`ws://${window.location.host}/ws/poll/{{ poll.slug }}/`);
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+ const socket = new WebSocket(`${protocol}://${window.location.host}/ws/poll/{{ poll.slug }}/`);
+
   socket.onmessage=(e)=>{
     const res=JSON.parse(e.data);
     let total=res.total;
