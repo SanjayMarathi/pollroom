@@ -7,25 +7,25 @@ PollRoom is a powerful, real-time polling application built with **Django** and 
 <h1 align="center">📸 Screenshots</h1>
 
 <p align="center">🎈 Seamless Integration</p>
-<p align="center"> <img src="output/bubble_view.png" width="700" alt="Dashboard View" /> </p>
+<p align="center"> <img src="output/DashBoard.png" width="700" alt="Dashboard View" /> </p>
 <p align="center"> Manage all your polls from a centralized <b>Dashboard</b>. You can track which polls are active, which are closed, and create new ones instantly. </p>
 
 ---
 
 <p align="center">📺 Instant Results</p>
-<p align="center"> <img src="output/video_player.png" width="700" alt="Poll Detail" /> </p>
+<p align="center"> <img src="output/PollDetail.png" width="700" alt="Poll Detail" /> </p>
 <p align="center"> The <b>Poll Detail Page</b> features a real-time progress bar. As users vote, the percentages and counts update live using WebSocket technology via Django Channels. </p>
 
 ---
 
 <p align="center">⚙️ Control Center</p>
-<p align="center"> <img src="output/settings_menu.png" width="700" alt="Create Poll" /> </p>
+<p align="center"> <img src="output/CreatePoll.png" width="700" alt="Create Poll" /> </p>
 <p align="center"> Use the <b>Create Poll</b> menu to add questions and multiple options. You can also toggle settings like "Include Creator" to determine if you are allowed to vote on your own poll. </p>
 
 ---
 
 <p align="center">🏆 Historical Data</p>
-<p align="center"> <img src="output/priority_settings.png" width="700" alt="History" /> </p>
+<p align="center"> <img src="output/History.png" width="700" alt="History" /> </p>
 <p align="center"> <b>Never lose track!</b> The History section allows everyone to view past polls and their final outcomes, ensuring transparency in every vote. </p>
 
 ---
