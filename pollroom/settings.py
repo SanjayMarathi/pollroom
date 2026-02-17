@@ -3,15 +3,26 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ---------------------------------------------------
+# ENV MODE
+# ---------------------------------------------------
+RENDER = os.environ.get("RENDER", False)
+
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-DEBUG = False
+DEBUG = not RENDER
 
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".onrender.com"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
 
 AUTH_PASSWORD_VALIDATORS = []
 
+# ---------------------------------------------------
+# APPS
+# ---------------------------------------------------
 INSTALLED_APPS = [
     "daphne",
     "django.contrib.admin",
@@ -20,13 +31,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "polls",
     "channels",
+    "polls",
 ]
 
+# ---------------------------------------------------
+# MIDDLEWARE
+# ---------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",   # static serving
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -36,10 +50,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "pollroom.urls"
 
+# ---------------------------------------------------
+# TEMPLATES
+# ---------------------------------------------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],   # allow global templates
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -51,6 +68,9 @@ TEMPLATES = [
     },
 ]
 
+# ---------------------------------------------------
+# ASGI / CHANNELS
+# ---------------------------------------------------
 ASGI_APPLICATION = "pollroom.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -59,6 +79,9 @@ CHANNEL_LAYERS = {
     }
 }
 
+# ---------------------------------------------------
+# DATABASE
+# ---------------------------------------------------
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -66,11 +89,31 @@ DATABASES = {
     }
 }
 
+# ---------------------------------------------------
+# STATIC FILES
+# ---------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# IMPORTANT: different behavior for dev vs production
+if DEBUG:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+# ---------------------------------------------------
+# AUTH REDIRECTS
+# ---------------------------------------------------
+LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
+
+# ---------------------------------------------------
+# DEFAULT PK
+# ---------------------------------------------------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
