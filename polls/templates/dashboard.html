@@ -1,0 +1,72 @@
+{% extends "base.html" %} {% block content %}
+<h1 style="font-size: 3rem; margin-bottom: 50px">Control Center</h1>
+
+<div
+  class="card"
+  style="padding: 0; border: none; box-shadow: none; background: transparent"
+>
+  {% for poll in polls %}
+  <div
+    class="card"
+    style="
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 10px 10px 0px #000;
+    "
+  >
+    <div>
+      <h3 style="margin: 0; font-size: 1.3rem">
+        <a
+          href="/poll/{{ poll.slug }}/"
+          style="color: #000; text-decoration: none"
+          >{{ poll.question }}</a
+        >
+      </h3>
+      <span
+        style="
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #888;
+          text-transform: uppercase;
+        "
+        >Generated: {{ poll.created_at|date:"M d, Y" }}</span
+      >
+    </div>
+
+    <div style="text-align: right">
+      <div
+        style="
+          font-size: 1.5rem;
+          font-weight: 900;
+          color: #000;
+          margin-bottom: 10px;
+        "
+      >
+        {{ poll.total_votes }} Votes
+      </div>
+      {% if not poll.is_closed %}
+      <a
+        href="/poll/{{ poll.slug }}/stop/"
+        class="btn"
+        style="padding: 10px 20px; font-size: 0.7rem"
+        >Terminate Poll</a
+      >
+      {% else %}
+      <span
+        style="
+          background: #000;
+          color: #fff;
+          padding: 8px 15px;
+          font-weight: 900;
+          font-size: 0.7rem;
+        "
+        >OFFLINE</span
+      >
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

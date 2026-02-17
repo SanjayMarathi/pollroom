@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PollRoom Pro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --silver-grad: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #e0e0e0 50%,
+          #c0c0c0 100%
+        );
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--silver-grad);
+        color: #000000;
+        margin: 0;
+        min-height: 100vh;
+      }
+      .navbar {
+        padding: 1.5rem 8%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #000;
+        color: #fff;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      }
+      .logo {
+        font-weight: 900;
+        color: #ffffff;
+        font-size: 1.8rem;
+        text-decoration: none;
+        letter-spacing: -2px;
+        text-transform: uppercase;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: #cccccc;
+        margin-left: 25px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        transition: 0.3s;
+      }
+      .nav-links a:hover {
+        color: #ffffff;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 60px auto;
+        padding: 0 20px;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #d1d1d1;
+        padding: 40px;
+        border-radius: 0px;
+        box-shadow: 20px 20px 0px #000000;
+        margin-bottom: 30px;
+      }
+
+      .btn {
+        background: #000;
+        color: #fff;
+        padding: 15px 30px;
+        border: none;
+        cursor: pointer;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+      }
+      .btn:hover {
+        background: #333;
+        transform: translate(-3px, -3px);
+        box-shadow: 5px 5px 0px #e0e0e0;
+      }
+      .status-tag {
+        font-size: 0.7rem;
+        font-weight: 900;
+        padding: 5px 10px;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="logo">POLLROOM.</a>
+      <div class="nav-links">
+        <a href="/history/">Public History</a> {% if user.is_authenticated %}
+        <a href="/create/">Create Poll</a>
+        <a href="/dashboard/">My Dashboard</a>
+        <a href="/logout/">Logout</a>
+        {% else %}
+        <a href="/login/">Login</a>
+        <a href="/register/">Register</a>
+        {% endif %}
+      </div>
+    </nav>
+    <div class="container">{% block content %}{% endblock %}</div>
+  </body>
+</html>

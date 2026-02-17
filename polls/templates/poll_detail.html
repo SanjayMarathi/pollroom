@@ -1,0 +1,148 @@
+{% extends "base.html" %} {% block content %}
+<div class="card">
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    "
+  >
+    <h1 style="font-weight: 800; color: #ff4500; margin: 0">
+      {{ poll.question }}
+    </h1>
+    <div style="text-align: right">
+      <div id="total-v" style="font-size: 2.5rem; font-weight: 800">
+        {{ total_votes }}
+      </div>
+      <div
+        style="
+          font-size: 0.7rem;
+          font-weight: 800;
+          color: #999;
+          letter-spacing: 1px;
+        "
+      >
+        TOTAL VOTES
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 350px 1fr; gap: 50px">
+    <div id="vote-section">
+      {% for o in poll.options.all %}
+      <div
+        style="
+          margin-bottom: 15px;
+          border: 1px solid #eee;
+          padding: 15px;
+          border-radius: 12px;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+          "
+        >
+          <span style="font-weight: 600">{{ o.text }}</span>
+          <span id="cnt-{{ o.id }}" style="font-weight: 800; color: #ff4500"
+            >{{ o.vote_count }}</span
+          >
+        </div>
+        <button
+          onclick="castVote({{ o.id }})"
+          class="btn"
+          style="width: 100%"
+          {%
+          if
+          poll.is_closed
+          %}disabled{%
+          endif
+          %}
+        >
+          VOTE
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="height: 400px"><canvas id="voteHistogram"></canvas></div>
+  </div>
+
+  <div
+    style="
+      margin-top: 40px;
+      padding: 25px;
+      border: 1px dashed #ff4500;
+      border-radius: 16px;
+      background: #fff9f7;
+      text-align: center;
+    "
+  >
+    <p style="font-weight: 800; color: #666; margin-top: 0">
+      SHARABLE POLL LINK
+    </p>
+    <code
+      style="
+        color: #ff4500;
+        display: block;
+        margin-bottom: 15px;
+        font-weight: 600;
+      "
+      id="p-link"
+      >{{ request.build_absolute_uri }}</code
+    >
+    <button
+      class="btn"
+      onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link Copied!');"
+    >
+      COPY LINK
+    </button>
+  </div>
+</div>
+
+<script>
+  const labels = [{% for o in poll.options.all %}"{{ o.text }}",{% endfor %}];
+  const initialData = [{% for o in poll.options.all %}{{ o.vote_count }},{% endfor %}];
+  const optIds = [{% for o in poll.options.all %}{{ o.id }},{% endfor %}];
+
+  const chart = new Chart(document.getElementById('voteHistogram').getContext('2d'), {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ data: initialData, backgroundColor: '#FF4500', borderRadius: 8 }] },
+      options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
+  });
+
+  const socket = new WebSocket(`ws://${window.location.host}/ws/poll/{{ poll.slug }}/`);
+  socket.onmessage = (e) => {
+      const res = JSON.parse(e.data);
+      res.votes.forEach((v, i) => {
+          chart.data.datasets[0].data[i] = v;
+          document.getElementById(`cnt-${optIds[i]}`).innerText = v;
+      });
+      chart.update();
+      document.getElementById('total-v').innerText = res.total;
+  };
+
+  function castVote(id) {
+      let deviceId = localStorage.getItem('p_dev_id');
+      if (!deviceId) {
+          deviceId = Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('p_dev_id', deviceId);
+      }
+      const p = new URLSearchParams();
+      p.append('option_id', id);
+      p.append('device_id', deviceId);
+      p.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+      fetch(`/vote/{{ poll.slug }}/`, { method: 'POST', body: p })
+          .then(r => r.json())
+          .then(d => {
+              if(d.success) document.querySelectorAll('#vote-section button').forEach(b => b.disabled = true);
+              else alert(d.error);
+          });
+  }
+</script>
+{% endblock %}

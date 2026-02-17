@@ -1,0 +1,69 @@
+{% extends "base.html" %} {% block content %}
+<div
+  class="card"
+  style="text-align: center; border: none; box-shadow: none; padding: 80px 20px"
+>
+  <h1
+    style="
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    "
+  >
+    Poll tracking, simplified.
+  </h1>
+  <p
+    style="
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      line-height: 1.5;
+    "
+  >
+    Create instant polls, share via link, and watch results update in real-time.
+    Built for speed, fairness, and professional analytics.
+  </p>
+  <div style="display: flex; justify-content: center; gap: 20px">
+    <a href="/create/" class="btn" style="padding: 18px 40px"
+      >Create Your Poll</a
+    >
+    <a
+      href="/history/"
+      class="btn"
+      style="
+        background: white;
+        border: 2px solid #eee;
+        color: #333;
+        padding: 18px 40px;
+      "
+      >View Public History</a
+    >
+  </div>
+</div>
+
+<div
+  style="
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  "
+>
+  <div class="card" style="padding: 30px; border-top: 5px solid #ff4500">
+    <h3 style="font-weight: 800; margin-top: 0">Real-Time Visualization</h3>
+    <p style="color: #666; font-size: 0.95rem">
+      Experience zero-latency updates with our WebSocket integration. Every vote
+      cast is instantly reflected on every connected screen.
+    </p>
+  </div>
+  <div class="card" style="padding: 30px; border-top: 5px solid #00bfff">
+    <h3 style="font-weight: 800; margin-top: 0">Creator Dashboard</h3>
+    <p style="color: #666; font-size: 0.95rem">
+      Take full control of your data. Monitor participation rates, manage active
+      sessions, and manually stop polls whenever you need.
+    </p>
+  </div>
+</div>
+{% endblock %}

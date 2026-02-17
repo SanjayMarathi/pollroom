@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto">
+  <h2 style="font-weight: 800">Generate New Poll</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <input
+      class="input"
+      type="text"
+      name="question"
+      placeholder="Your Question"
+      required
+      style="
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      "
+    />
+    <div id="opts">
+      <input
+        class="input"
+        type="text"
+        name="options"
+        placeholder="Option 1"
+        style="
+          width: 100%;
+          padding: 12px;
+          margin-bottom: 10px;
+          border-radius: 8px;
+          border: 1px solid #ddd;
+        "
+      />
+      <input
+        class="input"
+        type="text"
+        name="options"
+        placeholder="Option 2"
+        style="
+          width: 100%;
+          padding: 12px;
+          margin-bottom: 10px;
+          border-radius: 8px;
+          border: 1px solid #ddd;
+        "
+      />
+    </div>
+    <button
+      type="button"
+      onclick="addOpt()"
+      style="
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        font-weight: bold;
+      "
+    >
+      + Add Option
+    </button>
+
+    <div
+      style="
+        margin: 25px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+      "
+    >
+      <input type="checkbox" name="include_creator" id="inc" />
+      <label for="inc" style="font-weight: 600"
+        >Allow me (the creator) to vote</label
+      >
+    </div>
+
+    <button type="submit" class="btn" style="width: 100%">Create Poll</button>
+  </form>
+</div>
+<script>
+  function addOpt() {
+    const i = document.createElement("input");
+    i.type = "text";
+    i.name = "options";
+    i.placeholder = "Next Option";
+    i.style =
+      "width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;";
+    document.getElementById("opts").appendChild(i);
+  }
+</script>
+{% endblock %}

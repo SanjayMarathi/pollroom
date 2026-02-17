@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto;">
+    <div class="card">
+        <h2>Join the Room</h2>
+        <p style="margin-bottom: 30px; color: #666; font-weight: 600;">Create an account to start hosting live polls.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <label style="font-weight: 900; font-size: 0.75rem; text-transform: uppercase;">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="display: block; margin-top: -15px; margin-bottom: 15px; color: #888; font-size: 0.7rem;">{{ field.help_text }}</small>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn">Register Account</button>
+        </form>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/login/" style="color: #000; font-weight: 800; text-decoration: none; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #000;">Already a member? Sign In</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
