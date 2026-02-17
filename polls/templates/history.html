@@ -1,72 +1,144 @@
-{% extends "base.html" %} {% block content %}
-<h1 style="font-size: 3rem; margin-bottom: 50px">Global Feed</h1>
+{% extends "base.html" %}
+{% block content %}
 
-<div
-  style="
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 40px;
-  "
->
+<h1 style="font-size: 2.4rem; font-weight: 900; margin-bottom: 35px">
+  Global Feed
+</h1>
+
+{% if polls %}
+<div class="feed-grid">
+
   {% for poll in polls %}
-  <div class="card">
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 20px;
-      "
-    >
-      <h3 style="margin: 0; font-size: 1.5rem">
-        <a
-          href="/poll/{{ poll.slug }}/"
-          style="color: inherit; text-decoration: none"
-          >{{ poll.question }}</a
-        >
-      </h3>
-      <span
-        class="status-tag"
-        style="background: {% if poll.is_closed %}#000; color: #fff{% else %}#e0e0e0; color: #000{% endif %};"
-      >
-        {% if poll.is_closed %}Ended{% else %}Live{% endif %}
-      </span>
+  <a href="/poll/{{ poll.slug }}/" class="feed-card">
+
+    <div class="feed-top">
+      <h3 class="feed-title">{{ poll.question }}</h3>
+
+      {% if poll.is_closed %}
+        <span class="status-tag status-closed">Ended</span>
+      {% else %}
+        <span class="status-tag status-open">Live</span>
+      {% endif %}
     </div>
 
-    <p
-      style="
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #666;
-        text-transform: uppercase;
-        margin-bottom: 25px;
-      "
-    >
-      Host: {% if poll.created_by == user %}You{% else %}{{
-      poll.created_by.username }}{% endif %}
-    </p>
-
-    <div
-      style="
-        border-top: 2px solid #000;
-        padding-top: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      "
-    >
-      <span style="font-weight: 900; font-size: 1.2rem"
-        >{{ poll.total_votes }} Votes</span
-      >
-      <span style="font-size: 0.75rem; font-weight: 700; color: #999"
-        >{{ poll.created_at|date:"M d, Y" }}</span
-      >
+    <div class="feed-host">
+      Host:
+      <strong>
+        {% if poll.created_by == user %}
+          You
+        {% else %}
+          {{ poll.created_by.username }}
+        {% endif %}
+      </strong>
     </div>
-  </div>
-  {% empty %}
-  <div class="card">
-    <p>The feed is currently empty.</p>
-  </div>
+
+    <div class="feed-bottom">
+      <div class="feed-votes">
+        {{ poll.total_votes }}
+        <span>votes</span>
+      </div>
+
+      <div class="feed-date">
+        {{ poll.created_at|date:"M d, Y" }}
+      </div>
+    </div>
+
+  </a>
   {% endfor %}
+
 </div>
+
+{% else %}
+
+<div class="card" style="text-align: center">
+  <h2>No public polls yet</h2>
+  <p style="opacity: 0.7; margin-bottom: 25px">
+    Be the first to create a poll
+  </p>
+  <a href="/create/" class="btn">Create Poll</a>
+</div>
+
+{% endif %}
+
+
+<style>
+
+/* grid */
+.feed-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:24px;
+}
+
+/* card */
+.feed-card{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:26px;
+  transition:.25s;
+}
+
+.feed-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 22px rgba(255,106,0,.12);
+}
+
+/* top */
+.feed-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.feed-title{
+  font-size:1.25rem;
+  font-weight:700;
+  margin:0;
+  color:var(--text);
+}
+.feed-card:hover .feed-title{
+  color:var(--primary);
+}
+
+/* host */
+.feed-host{
+  font-size:.85rem;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+/* bottom */
+.feed-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid var(--border);
+  padding-top:18px;
+}
+
+.feed-votes{
+  font-size:1.4rem;
+  font-weight:900;
+  color:var(--primary);
+}
+.feed-votes span{
+  font-size:.7rem;
+  font-weight:600;
+  color:var(--muted);
+  margin-left:4px;
+}
+
+.feed-date{
+  font-size:.75rem;
+  color:var(--muted);
+}
+
+</style>
+
 {% endblock %}

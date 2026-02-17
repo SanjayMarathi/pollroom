@@ -48,12 +48,22 @@ def register(request):
 def create_poll(request):
     if request.method == "POST":
         q = request.POST.get("question")
-        poll = Poll.objects.create(question=q, created_by=request.user)
+        allow_creator = request.POST.get("include_creator") == "on"
+
+        poll = Poll.objects.create(
+            question=q,
+            created_by=request.user,
+            include_creator=allow_creator
+        )
+
         for opt in request.POST.getlist("options"):
             if opt.strip():
                 Option.objects.create(poll=poll, text=opt.strip())
+
         return redirect("poll_detail", slug=poll.slug)
+
     return render(request, "create_poll.html")
+
 
 
 @login_required
@@ -84,20 +94,29 @@ def poll_detail(request, slug):
 
 def vote(request, slug):
     poll = get_object_or_404(Poll, slug=slug)
+
     if poll.is_closed:
         return JsonResponse({"error": "Poll is stopped"}, status=403)
 
+    # 🔴 BLOCK CREATOR VOTING
+    if request.user.is_authenticated:
+        if poll.created_by == request.user and not poll.include_creator:
+            return JsonResponse({"error": "Creator is not allowed to vote"}, status=403)
+
     device_id = request.POST.get("device_id")
+
     if Vote.objects.filter(poll=poll, device_id=device_id).exists():
         return JsonResponse({"error": "Already voted from this device"}, status=403)
 
     option = get_object_or_404(Option, id=request.POST.get("option_id"), poll=poll)
     option.vote_count += 1
     option.save()
+
     Vote.objects.create(poll=poll, option=option, device_id=device_id)
 
     channel_layer = get_channel_layer()
     opts = poll.options.all().order_by("id")
+
     async_to_sync(channel_layer.group_send)(
         f"poll_{poll.slug}",
         {
@@ -110,4 +129,5 @@ def vote(request, slug):
             },
         },
     )
+
     return JsonResponse({"success": True})

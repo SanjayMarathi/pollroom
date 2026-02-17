@@ -1,72 +1,134 @@
 {% extends "base.html" %} {% block content %}
-<h1 style="font-size: 3rem; margin-bottom: 50px">Control Center</h1>
 
-<div
-  class="card"
-  style="padding: 0; border: none; box-shadow: none; background: transparent"
->
+<h1 style="font-size: 2.4rem; font-weight: 900; margin-bottom: 35px">
+  Control Center
+</h1>
+
+{% if polls %}
+<div class="poll-grid">
   {% for poll in polls %}
-  <div
-    class="card"
-    style="
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 10px 10px 0px #000;
-    "
-  >
-    <div>
-      <h3 style="margin: 0; font-size: 1.3rem">
-        <a
-          href="/poll/{{ poll.slug }}/"
-          style="color: #000; text-decoration: none"
-          >{{ poll.question }}</a
-        >
-      </h3>
-      <span
-        style="
-          font-size: 0.7rem;
-          font-weight: 700;
-          color: #888;
-          text-transform: uppercase;
-        "
-        >Generated: {{ poll.created_at|date:"M d, Y" }}</span
-      >
+  <div class="poll-card">
+    <div class="poll-main">
+      <a href="/poll/{{ poll.slug }}/" class="poll-title">
+        {{ poll.question }}
+      </a>
+
+      <div class="poll-meta">Created {{ poll.created_at|date:"M d, Y" }}</div>
     </div>
 
-    <div style="text-align: right">
-      <div
-        style="
-          font-size: 1.5rem;
-          font-weight: 900;
-          color: #000;
-          margin-bottom: 10px;
-        "
-      >
-        {{ poll.total_votes }} Votes
+    <div class="poll-side">
+      <div class="vote-count">
+        {{ poll.total_votes }}
+        <span>votes</span>
       </div>
+
       {% if not poll.is_closed %}
-      <a
-        href="/poll/{{ poll.slug }}/stop/"
-        class="btn"
-        style="padding: 10px 20px; font-size: 0.7rem"
-        >Terminate Poll</a
-      >
+      <span class="status-tag status-open">Active</span>
+      <a href="/poll/{{ poll.slug }}/stop/" class="danger-btn"> End Poll </a>
       {% else %}
-      <span
-        style="
-          background: #000;
-          color: #fff;
-          padding: 8px 15px;
-          font-weight: 900;
-          font-size: 0.7rem;
-        "
-        >OFFLINE</span
-      >
+      <span class="status-tag status-closed">Closed</span>
       {% endif %}
     </div>
   </div>
   {% endfor %}
 </div>
+
+{% else %}
+
+<div class="card" style="text-align: center">
+  <h2>No polls yet</h2>
+  <p style="opacity: 0.7; margin-bottom: 25px">
+    Create your first poll to start collecting responses
+  </p>
+  <a href="/create/" class="btn">Create Poll</a>
+</div>
+
+{% endif %}
+
+<style>
+
+/* grid */
+.poll-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:22px;
+}
+
+/* card */
+.poll-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:.25s;
+}
+
+.poll-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 22px rgba(255,106,0,.12);
+}
+
+/* title */
+.poll-title{
+  font-size:1.15rem;
+  font-weight:700;
+  color:var(--text);
+  text-decoration:none;
+  display:block;
+  margin-bottom:6px;
+}
+.poll-title:hover{
+  color:var(--primary);
+}
+
+/* meta */
+.poll-meta{
+  font-size:.8rem;
+  color:var(--muted);
+}
+
+/* side panel */
+.poll-side{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+
+/* votes */
+.vote-count{
+  font-size:1.6rem;
+  font-weight:900;
+  color:var(--primary);
+}
+.vote-count span{
+  display:block;
+  font-size:.7rem;
+  font-weight:600;
+  color:var(--muted);
+}
+
+/* end poll button */
+.danger-btn{
+  background:#fff0f0;
+  color:#dc2626;
+  text-decoration:none;
+  padding:8px 16px;
+  border-radius:10px;
+  font-size:.75rem;
+  font-weight:700;
+  transition:.2s;
+}
+.danger-btn:hover{
+  background:#dc2626;
+  color:white;
+}
+
+</style>
+
+
 {% endblock %}

@@ -1,62 +1,35 @@
 {% extends "base.html" %} {% block content %}
-<div class="card">
-  <div
-    style="
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 20px;
-      margin-bottom: 30px;
-    "
-  >
-    <h1 style="font-weight: 800; color: #ff4500; margin: 0">
-      {{ poll.question }}
-    </h1>
-    <div style="text-align: right">
-      <div id="total-v" style="font-size: 2.5rem; font-weight: 800">
-        {{ total_votes }}
-      </div>
-      <div
-        style="
-          font-size: 0.7rem;
-          font-weight: 800;
-          color: #999;
-          letter-spacing: 1px;
-        "
-      >
-        TOTAL VOTES
-      </div>
-    </div>
+
+<!-- SUMMARY -->
+<div class="card total-summary">
+  <div>
+    <h2 class="summary-title">{{ poll.question }}</h2>
+    <span class="summary-sub">Live Poll</span>
   </div>
 
-  <div style="display: grid; grid-template-columns: 350px 1fr; gap: 50px">
+  <div class="summary-votes">
+    <div id="total-v">{{ total_votes }}</div>
+    <span>Total Votes</span>
+  </div>
+</div>
+
+<div class="poll-layout">
+  <!-- LEFT : VOTING -->
+  <div class="card">
     <div id="vote-section">
       {% for o in poll.options.all %}
-      <div
-        style="
-          margin-bottom: 15px;
-          border: 1px solid #eee;
-          padding: 15px;
-          border-radius: 12px;
-        "
-      >
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-          "
-        >
-          <span style="font-weight: 600">{{ o.text }}</span>
-          <span id="cnt-{{ o.id }}" style="font-weight: 800; color: #ff4500"
-            >{{ o.vote_count }}</span
-          >
+      <div class="option-card">
+        <div class="option-head">
+          <span>{{ o.text }}</span>
         </div>
+
+        <div class="progress">
+          <div class="progress-bar" id="bar-{{ o.id }}"></div>
+        </div>
+
         <button
           onclick="castVote({{ o.id }})"
-          class="btn"
-          style="width: 100%"
+          class="btn vote-btn"
           {%
           if
           poll.is_closed
@@ -64,85 +37,232 @@
           endif
           %}
         >
-          VOTE
+          Vote
         </button>
       </div>
       {% endfor %}
     </div>
-    <div style="height: 400px"><canvas id="voteHistogram"></canvas></div>
   </div>
 
-  <div
-    style="
-      margin-top: 40px;
-      padding: 25px;
-      border: 1px dashed #ff4500;
-      border-radius: 16px;
-      background: #fff9f7;
-      text-align: center;
-    "
-  >
-    <p style="font-weight: 800; color: #666; margin-top: 0">
-      SHARABLE POLL LINK
-    </p>
-    <code
-      style="
-        color: #ff4500;
-        display: block;
-        margin-bottom: 15px;
-        font-weight: 600;
-      "
-      id="p-link"
-      >{{ request.build_absolute_uri }}</code
-    >
-    <button
-      class="btn"
-      onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link Copied!');"
-    >
-      COPY LINK
-    </button>
+  <!-- RIGHT : CHARTS -->
+  <div class="analytics">
+    <div class="card chart-card">
+      <h3>Vote Distribution</h3>
+      <canvas id="voteHistogram"></canvas>
+    </div>
+
+    <div class="card chart-card">
+      <h3>Percentage Share</h3>
+      <canvas id="votePie"></canvas>
+    </div>
   </div>
 </div>
 
-<script>
-  const labels = [{% for o in poll.options.all %}"{{ o.text }}",{% endfor %}];
-  const initialData = [{% for o in poll.options.all %}{{ o.vote_count }},{% endfor %}];
-  const optIds = [{% for o in poll.options.all %}{{ o.id }},{% endfor %}];
+<!-- COUNTS -->
+<div class="card count-panel">
+  <h3>Detailed Results</h3>
+  {% for o in poll.options.all %}
+  <div class="count-row">
+    <span>{{ o.text }}</span>
+    <strong id="cnt-{{ o.id }}">{{ o.vote_count }}</strong>
+  </div>
+  {% endfor %}
+</div>
 
-  const chart = new Chart(document.getElementById('voteHistogram').getContext('2d'), {
-      type: 'bar',
-      data: { labels: labels, datasets: [{ data: initialData, backgroundColor: '#FF4500', borderRadius: 8 }] },
-      options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
+<!-- SHARE -->
+<div class="card share-card">
+  <h3>Share Poll</h3>
+  <code id="p-link">{{ request.build_absolute_uri }}</code>
+  <button class="btn" onclick="copyLink()">Copy Link</button>
+</div>
+
+<style>
+  /* summary */
+  .total-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 18px 22px;
+  }
+  .summary-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .summary-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .summary-votes #total-v {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary);
+  }
+
+  /* layout */
+  .poll-layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+
+  /* option */
+  .option-card {
+    margin-bottom: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .option-head {
+    margin-bottom: 6px;
+  }
+
+  /* progress */
+  .progress {
+    height: 8px;
+    background: #e8f0ff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4f8df7, #7bb6ff);
+    width: 0%;
+    transition: 0.35s;
+  }
+
+  .vote-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  /* charts */
+  .analytics {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .chart-card {
+    height: 320px;
+  }
+  .chart-card canvas {
+    height: 240px !important;
+  }
+
+  /* counts */
+  .count-panel {
+    margin-top: 18px;
+  }
+  .count-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .count-row strong {
+    color: #4f8df7;
+  }
+
+  /* share */
+  .share-card {
+    text-align: center;
+    margin-top: 12px;
+  }
+  .share-card code {
+    display: block;
+    margin: 12px 0;
+    background: var(--primary-soft);
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .poll-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const labels=[{% for o in poll.options.all %}"{{ o.text }}",{% endfor %}];
+  const initialData=[{% for o in poll.options.all %}{{ o.vote_count }},{% endfor %}];
+  const optIds=[{% for o in poll.options.all %}{{ o.id }},{% endfor %}];
+
+  /* blue palette */
+  function generateColors(n){
+    const palette=[
+      '#4f8df7','#5aa2ff','#7bb6ff','#9cc9ff','#bddcff','#dbeaff',
+      '#4cc9f0','#4895ef','#4361ee','#3f37c9','#560bad','#7209b7'
+    ];
+    return Array.from({length:n},(_,i)=>palette[i%palette.length]);
+  }
+  const colors=generateColors(labels.length);
+
+  /* bar chart */
+  const barChart=new Chart(document.getElementById('voteHistogram'),{
+    type:'bar',
+    data:{labels,datasets:[{data:initialData,backgroundColor:colors,borderRadius:6}]},
+    options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}}
   });
 
-  const socket = new WebSocket(`ws://${window.location.host}/ws/poll/{{ poll.slug }}/`);
-  socket.onmessage = (e) => {
-      const res = JSON.parse(e.data);
-      res.votes.forEach((v, i) => {
-          chart.data.datasets[0].data[i] = v;
-          document.getElementById(`cnt-${optIds[i]}`).innerText = v;
-      });
-      chart.update();
-      document.getElementById('total-v').innerText = res.total;
+  /* pie chart */
+  const pieChart=new Chart(document.getElementById('votePie'),{
+    type:'pie',
+    data:{labels,datasets:[{data:initialData,backgroundColor:colors}]}
+  });
+
+  /* live updates */
+  const socket=new WebSocket(`ws://${window.location.host}/ws/poll/{{ poll.slug }}/`);
+  socket.onmessage=(e)=>{
+    const res=JSON.parse(e.data);
+    let total=res.total;
+
+    res.votes.forEach((v,i)=>{
+      barChart.data.datasets[0].data[i]=v;
+      pieChart.data.datasets[0].data[i]=v;
+
+      document.getElementById(`cnt-${optIds[i]}`).innerText=v;
+
+      let percent=total?((v/total)*100):0;
+      document.getElementById(`bar-${optIds[i]}`).style.width=percent+"%";
+    });
+
+    barChart.update();
+    pieChart.update();
+    document.getElementById('total-v').innerText=total;
   };
 
-  function castVote(id) {
-      let deviceId = localStorage.getItem('p_dev_id');
-      if (!deviceId) {
-          deviceId = Math.random().toString(36).substring(2, 15);
-          localStorage.setItem('p_dev_id', deviceId);
-      }
-      const p = new URLSearchParams();
-      p.append('option_id', id);
-      p.append('device_id', deviceId);
-      p.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+  /* vote */
+  function castVote(id){
+    let deviceId=localStorage.getItem('p_dev_id');
+    if(!deviceId){
+      deviceId=Math.random().toString(36).substring(2,15);
+      localStorage.setItem('p_dev_id',deviceId);
+    }
+    const p=new URLSearchParams();
+    p.append('option_id',id);
+    p.append('device_id',deviceId);
+    p.append('csrfmiddlewaretoken','{{ csrf_token }}');
 
-      fetch(`/vote/{{ poll.slug }}/`, { method: 'POST', body: p })
-          .then(r => r.json())
-          .then(d => {
-              if(d.success) document.querySelectorAll('#vote-section button').forEach(b => b.disabled = true);
-              else alert(d.error);
-          });
+    fetch(`/vote/{{ poll.slug }}/`,{method:'POST',body:p})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.success) document.querySelectorAll('#vote-section button').forEach(b=>b.disabled=true);
+      else alert(d.error);
+    });
+  }
+
+  /* copy link */
+  function copyLink(){
+    navigator.clipboard.writeText(document.getElementById("p-link").innerText);
+    alert("Link copied!");
   }
 </script>
+
 {% endblock %}

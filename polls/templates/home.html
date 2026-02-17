@@ -1,69 +1,174 @@
-{% extends "base.html" %} {% block content %}
-<div
-  class="card"
-  style="text-align: center; border: none; box-shadow: none; padding: 80px 20px"
->
-  <h1
-    style="
-      font-size: 3.5rem;
-      font-weight: 800;
-      margin-bottom: 20px;
-      letter-spacing: -2px;
-    "
-  >
-    Poll tracking, simplified.
-  </h1>
-  <p
-    style="
-      font-size: 1.2rem;
-      color: #666;
-      max-width: 600px;
-      margin: 0 auto 40px auto;
-      line-height: 1.5;
-    "
-  >
-    Create instant polls, share via link, and watch results update in real-time.
-    Built for speed, fairness, and professional analytics.
-  </p>
-  <div style="display: flex; justify-content: center; gap: 20px">
-    <a href="/create/" class="btn" style="padding: 18px 40px"
-      >Create Your Poll</a
-    >
-    <a
-      href="/history/"
-      class="btn"
-      style="
-        background: white;
-        border: 2px solid #eee;
-        color: #333;
-        padding: 18px 40px;
-      "
-      >View Public History</a
-    >
-  </div>
-</div>
+{% extends "base.html" %}
+{% block content %}
 
-<div
-  style="
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 40px;
-  "
->
-  <div class="card" style="padding: 30px; border-top: 5px solid #ff4500">
-    <h3 style="font-weight: 800; margin-top: 0">Real-Time Visualization</h3>
-    <p style="color: #666; font-size: 0.95rem">
-      Experience zero-latency updates with our WebSocket integration. Every vote
-      cast is instantly reflected on every connected screen.
+<!-- HERO -->
+<section class="hero">
+
+  <h1 class="hero-title">
+    Poll tracking,
+    <span>simplified</span>
+  </h1>
+
+  <p class="hero-sub">
+    Create instant polls, share a link, and watch results update live.
+    Built for speed, fairness and real-time analytics.
+  </p>
+
+  <div class="hero-actions">
+    <a href="/create/" class="btn hero-primary">Create Your Poll</a>
+    <a href="/history/" class="hero-secondary">View Public History</a>
+  </div>
+
+</section>
+
+
+<!-- FEATURES -->
+<!-- FEATURES -->
+<section class="features">
+
+  <div class="feature-card">
+    <div class="feature-line"></div>
+    <h3>Real-Time Results</h3>
+    <p>
+      Votes appear instantly across all connected users using live updates.
+      Perfect for classrooms, events and live streams.
     </p>
   </div>
-  <div class="card" style="padding: 30px; border-top: 5px solid #00bfff">
-    <h3 style="font-weight: 800; margin-top: 0">Creator Dashboard</h3>
-    <p style="color: #666; font-size: 0.95rem">
-      Take full control of your data. Monitor participation rates, manage active
-      sessions, and manually stop polls whenever you need.
+
+  <div class="feature-card">
+    <div class="feature-line"></div>
+    <h3>Creator Dashboard</h3>
+    <p>
+      Monitor participation, stop polls anytime, and manage your sessions
+      from a clean control panel.
     </p>
   </div>
-</div>
+
+  <div class="feature-card">
+    <div class="feature-line"></div>
+    <h3>Share Anywhere</h3>
+    <p>
+      Each poll gets a simple shareable link. No login required for voters.
+      Works on mobile and desktop instantly.
+    </p>
+  </div>
+
+</section>
+
+
+
+<style>
+
+/* HERO */
+
+.hero{
+  text-align:center;
+  padding:90px 20px 70px 20px;
+  max-width:850px;
+  margin:auto;
+}
+
+.hero-title{
+  font-size:3.2rem;
+  font-weight:900;
+  line-height:1.1;
+  margin-bottom:20px;
+}
+
+.hero-title span{
+  background:linear-gradient(135deg,#5B8DEF,#7F5AF0);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.hero-sub{
+  font-size:1.15rem;
+  opacity:.75;
+  max-width:650px;
+  margin:auto;
+  margin-bottom:40px;
+}
+
+.hero-actions{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.hero-primary{
+  padding:16px 38px;
+}
+
+.hero-secondary{
+  padding:14px 36px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:white;
+  color:var(--text);
+  font-weight:600;
+  text-decoration:none;
+  transition:.25s;
+}
+
+.hero-secondary:hover{
+  background:var(--primary-soft);
+  border-color:var(--primary);
+  color:var(--primary);
+}
+
+
+
+/* FEATURES */
+
+/* FEATURES */
+
+.features{
+  margin-top:60px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:26px;
+}
+
+.feature-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  transition:.25s;
+  text-align:center;            /* center all content */
+  display:flex;
+  flex-direction:column;
+  align-items:center;           /* horizontal center */
+}
+
+.feature-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 22px rgba(255,106,0,.12);
+}
+
+
+/* orange accent line instead of emoji */
+.feature-line{
+  width:40px;
+  height:4px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:4px;
+  margin:0 auto 14px auto;   /* center line */
+}
+
+
+.feature-card h3{
+  margin:6px 0 8px 0;
+  color:var(--text);
+}
+
+.feature-card p{
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+
+</style>
+
 {% endblock %}

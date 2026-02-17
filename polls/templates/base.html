@@ -3,104 +3,195 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>PollRoom Pro</title>
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-      :root {
-        --silver-grad: linear-gradient(
-          135deg,
-          #ffffff 0%,
-          #e0e0e0 50%,
-          #c0c0c0 100%
-        );
-      }
-      body {
-        font-family: "Inter", sans-serif;
-        background: var(--silver-grad);
-        color: #000000;
-        margin: 0;
-        min-height: 100vh;
-      }
-      .navbar {
-        padding: 1.5rem 8%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #000;
-        color: #fff;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      }
-      .logo {
-        font-weight: 900;
-        color: #ffffff;
-        font-size: 1.8rem;
-        text-decoration: none;
-        letter-spacing: -2px;
-        text-transform: uppercase;
-      }
-      .nav-links a {
-        text-decoration: none;
-        color: #cccccc;
-        margin-left: 25px;
-        font-weight: 700;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        transition: 0.3s;
-      }
-      .nav-links a:hover {
-        color: #ffffff;
-      }
-      .container {
-        max-width: 1100px;
-        margin: 60px auto;
-        padding: 0 20px;
-      }
+:root{
+  --primary:#ff6a00;        /* main orange */
+  --primary-dark:#e65c00;
+  --primary-soft:#fff1e6;
+  --accent:#ff9a3c;         /* warm yellow-orange */
+  --bg:#fafafa;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#ffffff;
+}
 
-      .card {
-        background: #ffffff;
-        border: 1px solid #d1d1d1;
-        padding: 40px;
-        border-radius: 0px;
-        box-shadow: 20px 20px 0px #000000;
-        margin-bottom: 30px;
-      }
+/* ---------- GLOBAL ---------- */
 
-      .btn {
-        background: #000;
-        color: #fff;
-        padding: 15px 30px;
-        border: none;
-        cursor: pointer;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: 0.3s;
-        display: inline-block;
-        text-decoration: none;
-        text-align: center;
-      }
-      .btn:hover {
-        background: #333;
-        transform: translate(-3px, -3px);
-        box-shadow: 5px 5px 0px #e0e0e0;
-      }
-      .status-tag {
-        font-size: 0.7rem;
-        font-weight: 900;
-        padding: 5px 10px;
-        text-transform: uppercase;
-      }
-    </style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ---------- NAVBAR ---------- */
+
+.navbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 8%;
+  background:white;
+  border-bottom:1px solid var(--border);
+}
+
+.logo{
+  font-size:1.7rem;
+  font-weight:900;
+  text-decoration:none;
+  letter-spacing:1px;
+  color:var(--primary);
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.nav-links{
+  display:flex;
+  gap:26px;
+  align-items:center;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:var(--muted);
+  font-weight:600;
+  font-size:.9rem;
+  position:relative;
+  transition:.25s;
+}
+
+.nav-links a:hover{
+  color:var(--primary);
+}
+
+/* ---------- LAYOUT ---------- */
+
+.container{
+  max-width:1150px;
+  margin:50px auto;
+  padding:0 18px;
+}
+
+/* ---------- CARDS ---------- */
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:30px;
+  margin-bottom:26px;
+  transition:.25s;
+}
+
+.card:hover{
+  box-shadow:0 8px 24px rgba(255,106,0,.12);
+}
+
+/* ---------- BUTTON ---------- */
+
+.btn{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:white;
+  border:none;
+  padding:14px 28px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+  text-decoration:none;
+  display:inline-block;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(255,106,0,.35);
+}
+
+/* ---------- STATUS ---------- */
+
+.status-tag{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:700;
+}
+
+.status-open{
+  background:#fff3e8;
+  color:#ff6a00;
+}
+
+.status-closed{
+  background:#ffe9e9;
+  color:#dc2626;
+}
+
+/* ---------- INPUTS ---------- */
+
+input,textarea,select{
+  width:100%;
+  padding:13px;
+  margin-top:8px;
+  margin-bottom:18px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:white;
+  color:var(--text);
+  font-size:.95rem;
+  outline:none;
+}
+
+input:focus,textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+/* ---------- CODE BOX ---------- */
+
+code{
+  background:var(--primary-soft);
+  color:var(--primary-dark);
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:768px){
+  .nav-links{gap:14px;font-size:.8rem}
+  .container{margin:30px auto}
+}
+</style>
+
   </head>
+
   <body>
     <nav class="navbar">
-      <a href="/" class="logo">POLLROOM.</a>
+      <a href="/" class="logo">POLL<span>ROOM</span></a>
+
       <div class="nav-links">
-        <a href="/history/">Public History</a> {% if user.is_authenticated %}
+        <a href="/history/">Public History</a>
+
+        {% if user.is_authenticated %}
         <a href="/create/">Create Poll</a>
         <a href="/dashboard/">My Dashboard</a>
         <a href="/logout/">Logout</a>
@@ -110,6 +201,7 @@
         {% endif %}
       </div>
     </nav>
+
     <div class="container">{% block content %}{% endblock %}</div>
   </body>
 </html>

@@ -1,20 +1,106 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div style="max-width: 450px; margin: 0 auto;">
-    <div class="card">
-        <h2>Identity</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <label style="font-weight: 900; font-size: 0.75rem; text-transform: uppercase;">Username</label>
-            {{ form.username }}
-            <label style="font-weight: 900; font-size: 0.75rem; text-transform: uppercase;">Password</label>
-            {{ form.password }}
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <div style="margin-top: 30px; text-align: center;">
-            <a href="/register/" style="color: #000; font-weight: 800; text-decoration: none; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #000;">New here? Create Identity</a>
-        </div>
+
+<div class="auth-wrapper">
+
+  <div class="auth-card">
+
+    <h2 class="auth-title">Welcome Back</h2>
+    <p class="auth-sub">Login to continue to PollRoom</p>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <label class="auth-label">Username</label>
+      {{ form.username }}
+
+      <label class="auth-label">Password</label>
+      {{ form.password }}
+
+      <button type="submit" class="btn auth-btn">Login</button>
+    </form>
+
+    <div class="auth-footer">
+      New here?
+      <a href="/register/">Create account</a>
     </div>
+
+  </div>
+
 </div>
+
+
+<style>
+
+/* center page */
+.auth-wrapper{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:70px 20px;
+}
+
+/* card */
+.auth-card{
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:40px;
+  text-align:left;
+  box-shadow:0 10px 25px rgba(255,106,0,.08);
+}
+
+/* title */
+.auth-title{
+  margin:0;
+  font-size:1.9rem;
+  font-weight:800;
+  color:var(--primary);
+}
+.auth-sub{
+  margin-top:6px;
+  margin-bottom:28px;
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+/* labels */
+.auth-label{
+  display:block;
+  margin-bottom:6px;
+  margin-top:14px;
+  font-size:.75rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* button */
+.auth-btn{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
+}
+
+/* footer */
+.auth-footer{
+  margin-top:25px;
+  text-align:center;
+  font-size:.9rem;
+  color:var(--muted);
+}
+.auth-footer a{
+  color:var(--primary);
+  text-decoration:none;
+  font-weight:700;
+}
+.auth-footer a:hover{
+  text-decoration:underline;
+}
+
+</style>
+
 {% endblock %}
